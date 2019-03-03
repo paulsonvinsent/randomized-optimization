@@ -1,21 +1,17 @@
 package com.distribuitech
 
 import co.theasi.plotly.{AxisOptions, Plot, ScatterMode, ScatterOptions, draw, writer}
-import opt.ga.GenericGeneticAlgorithmProblem
-import opt.prob.GenericProbabilisticOptimizationProblem
-import opt.{EvaluationFunction, GenericHillClimbingProblem}
+import opt.EvaluationFunction
 
 object Engine {
   def plotScores(ef: EvaluationFunction,
                  name: String, iterations: List[Int],
                  geneticIterations: List[Int],
                  mimicIterations: List[Int])
-                (implicit hcp: GenericHillClimbingProblem,
-                 gap: GenericGeneticAlgorithmProblem,
-                 pop: GenericProbabilisticOptimizationProblem) = {
+                (helper: OptimizationGenerator) = {
 
     val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1,
-      hcp, gap, pop).runExperiment()
+      helper).runExperiment()
 
     val commonAxisOptions = AxisOptions()
 
@@ -41,11 +37,9 @@ object Engine {
 
   def plotTimes(ef: EvaluationFunction, name: String, iterations: List[Int]
                 , geneticIterations: List[Int], mimicIterations: List[Int])
-               (implicit hcp: GenericHillClimbingProblem,
-                gap: GenericGeneticAlgorithmProblem,
-                pop: GenericProbabilisticOptimizationProblem) = {
+               (helper: OptimizationGenerator) = {
 
-    val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1, hcp, gap, pop).runExperiment()
+    val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1, helper).runExperiment()
 
     val commonAxisOptions = AxisOptions()
 

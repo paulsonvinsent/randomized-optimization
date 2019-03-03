@@ -1,31 +1,27 @@
 package com.distribuitech
 
 import opt._
-import opt.ga.{GenericGeneticAlgorithmProblem, StandardGeneticAlgorithm}
-import opt.prob.{GenericProbabilisticOptimizationProblem, MIMIC}
 import shared.FixedIterationTrainer
 
 
 case class Experiment(evalFunction: EvaluationFunction,
                       hillClimbingIterations: List[Int], geneticIterations: List[Int],
                       mimicIterations: List[Int],
-                      runs: Int, hcp: GenericHillClimbingProblem,
-                      gap: GenericGeneticAlgorithmProblem,
-                      pop: GenericProbabilisticOptimizationProblem) {
+                      runs: Int, generator: OptimizationGenerator) {
 
 
   def runExperiment(): ExperimentResults = {
 
     val allResults: List[(String, AtomicResult)] = hillClimbingIterations.flatMap(iter => {
       //All optimization Algorithms
-      val rhc = new RandomizedHillClimbing(hcp)
-      val simulatedAnnealing = new SimulatedAnnealing(1E13, .97, hcp)
+      val rhc = generator.getRHC()
+      val simulatedAnnealing = generator.getSA()
 
       List(
         ("rhc", rhc), ("sa", simulatedAnnealing)
       ).map(
         pair => {
-          val tuple = (pair._1, runAndReport(pair._2, iter, 2))
+          val tuple = (pair._1, runAndReport(pair._2, iter, runs))
           println(tuple)
           tuple
         }
@@ -34,15 +30,15 @@ case class Experiment(evalFunction: EvaluationFunction,
     ) :::
       geneticIterations.map(iter => {
         //All optimization Algorithms
-        val ga = new StandardGeneticAlgorithm(200, 20, 10, gap)
-        val tuple = ("ga", runAndReport(ga, iter, 2))
+        val ga = generator.getGA()
+        val tuple = ("ga", runAndReport(ga, iter, runs))
         println(tuple)
         tuple
       }
       ) ::: mimicIterations.map(iter => {
       //All optimization Algorithms
-      val mimic = new MIMIC(200, 20, pop)
-      val tuple = ("mimic", runAndReport(mimic, iter, 2))
+      val mimic = generator.getMIMIC()
+      val tuple = ("mimic", runAndReport(mimic, iter, runs))
       println(tuple)
       tuple
     }

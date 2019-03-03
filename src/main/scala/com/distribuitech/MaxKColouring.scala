@@ -1,20 +1,19 @@
 package com.distribuitech
 
 import com.distribuitech.Engine.{plotScores, plotTimes}
-import opt.ga
 import dist.{DiscreteDependencyTree, DiscretePermutationDistribution}
-import opt.{GenericHillClimbingProblem, SwapNeighbor}
-import opt.ga.{GenericGeneticAlgorithmProblem, MaxKColorFitnessFunction, SingleCrossOver, SwapMutation}
-import opt.prob.GenericProbabilisticOptimizationProblem
-import opt.ga.MaxKColorFitnessFunction
+import opt._
+import opt.ga._
+import opt.prob.{GenericProbabilisticOptimizationProblem, MIMIC}
+
 import scala.util.Random
 
 
 object MaxKColouring extends App {
 
-  val N = 50
-  val L = 4
-  val K = 8
+  val N = 800
+  val L = 18
+  val K = 7
   val random = new Random(N * L)
 
   val name = "Max K Colouring"
@@ -22,20 +21,55 @@ object MaxKColouring extends App {
   val vertices: Array[ga.Vertex] = Helper.getGraph(N, L)
 
   val ef = new MaxKColorFitnessFunction(vertices)
-  val odd = new DiscretePermutationDistribution(K)
-  val nf = new SwapNeighbor
-  val mf = new SwapMutation
-  val cf = new SingleCrossOver
-  implicit val hcp: GenericHillClimbingProblem = new GenericHillClimbingProblem(ef, odd, nf)
-  implicit val gap: GenericGeneticAlgorithmProblem = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf)
-  val df = new DiscreteDependencyTree(.1)
-  implicit val pop: GenericProbabilisticOptimizationProblem = new GenericProbabilisticOptimizationProblem(ef, odd, df)
 
-  val iterations: List[Int] = List(100, 200, 500, 800, 1000, 2000, 5000)
-  val iterationMimic = List(100, 200, 400, 600, 900, 1000, 2000)
-  val iterationsSa = iterationMimic.map(_ * 30000)
-  val iterationsGa = iterationsSa.map(x => x / 300)
-  plotScores(ef, name, iterations, iterations, iterations)
-  plotTimes(ef, name, iterationsSa, iterationsGa, iterationMimic)
+  val iterations: List[Int] = (1 to 50).map(_ * 2).toList
+  val iterationMimic = (1 to 50) map (_ * 2) toList
+  val iterationsSa = iterationMimic.map(_ * 50)
+
+  object generator extends OptimizationGenerator {
+
+
+    override def getGenericHillClimbingProblem: GenericHillClimbingProblem = {
+
+      val ef = new MaxKColorFitnessFunction(vertices)
+      val odd = new DiscretePermutationDistribution(K)
+      val nf = new SwapNeighbor
+      new GenericHillClimbingProblem(ef, odd, nf)
+    }
+
+    override def getGenericGeneticAlgorithmProblem: GenericGeneticAlgorithmProblem = {
+      val ef = new MaxKColorFitnessFunction(vertices)
+      val odd = new DiscretePermutationDistribution(K)
+      val mf = new SwapMutation
+      val cf = new SingleCrossOver
+      new GenericGeneticAlgorithmProblem(ef, odd, mf, cf)
+    }
+
+    override def getGenericProbabilisticOptimizationProblem: GenericProbabilisticOptimizationProblem = {
+      val ef = new MaxKColorFitnessFunction(vertices)
+      val odd = new DiscretePermutationDistribution(K)
+      val df = new DiscreteDependencyTree(.1)
+      new GenericProbabilisticOptimizationProblem(ef, odd, df)
+    }
+
+    override def getRHC(): RandomizedHillClimbing =
+      new RandomizedHillClimbing(getGenericHillClimbingProblem)
+
+    override def getSA(): SimulatedAnnealing = new SimulatedAnnealing(1E11, .96, getGenericHillClimbingProblem)
+
+    override def getGA(): StandardGeneticAlgorithm = {
+      import opt.ga.StandardGeneticAlgorithm
+      new StandardGeneticAlgorithm(200, 10, 60, getGenericGeneticAlgorithmProblem)
+    }
+
+    override def getMIMIC(): MIMIC = {
+      import opt.prob.MIMIC
+      new MIMIC(200, 100, getGenericProbabilisticOptimizationProblem)
+    }
+  }
+
+
+  plotScores(ef, name, iterations, iterations, iterations)(generator)
+  plotTimes(ef, name, iterationsSa, iterationMimic, iterationMimic)(generator)
 
 }
