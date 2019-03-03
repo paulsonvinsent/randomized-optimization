@@ -8,12 +8,13 @@ import opt.{EvaluationFunction, GenericHillClimbingProblem}
 object Engine {
   def plotScores(ef: EvaluationFunction,
                  name: String, iterations: List[Int],
+                 geneticIterations: List[Int],
                  mimicIterations: List[Int])
                 (implicit hcp: GenericHillClimbingProblem,
                  gap: GenericGeneticAlgorithmProblem,
                  pop: GenericProbabilisticOptimizationProblem) = {
 
-    val results: ExperimentResults = Experiment(ef, iterations, iterations, 1,
+    val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1,
       hcp, gap, pop).runExperiment()
 
     val commonAxisOptions = AxisOptions()
@@ -39,11 +40,12 @@ object Engine {
 
 
   def plotTimes(ef: EvaluationFunction, name: String, iterations: List[Int]
-                , mimicIterations: List[Int])(implicit hcp: GenericHillClimbingProblem,
-                                              gap: GenericGeneticAlgorithmProblem,
-                                              pop: GenericProbabilisticOptimizationProblem) = {
+                , geneticIterations: List[Int], mimicIterations: List[Int])
+               (implicit hcp: GenericHillClimbingProblem,
+                gap: GenericGeneticAlgorithmProblem,
+                pop: GenericProbabilisticOptimizationProblem) = {
 
-    val results: ExperimentResults = Experiment(ef, iterations, mimicIterations, 1, hcp, gap, pop).runExperiment()
+    val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1, hcp, gap, pop).runExperiment()
 
     val commonAxisOptions = AxisOptions()
 

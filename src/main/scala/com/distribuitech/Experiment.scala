@@ -7,22 +7,22 @@ import shared.FixedIterationTrainer
 
 
 case class Experiment(evalFunction: EvaluationFunction,
-                      iterations: List[Int], mimicIterations: List[Int],
-                      runs: Int,hcp:GenericHillClimbingProblem,
-                      gap:GenericGeneticAlgorithmProblem,
-                      pop:GenericProbabilisticOptimizationProblem) {
-
+                      hillClimbingIterations: List[Int], geneticIterations: List[Int],
+                      mimicIterations: List[Int],
+                      runs: Int, hcp: GenericHillClimbingProblem,
+                      gap: GenericGeneticAlgorithmProblem,
+                      pop: GenericProbabilisticOptimizationProblem) {
 
 
   def runExperiment(): ExperimentResults = {
 
-    val allResults: List[(String, AtomicResult)] = iterations.flatMap(iter => {
+    val allResults: List[(String, AtomicResult)] = hillClimbingIterations.flatMap(iter => {
       //All optimization Algorithms
       val rhc = new RandomizedHillClimbing(hcp)
       val simulatedAnnealing = new SimulatedAnnealing(1E13, .97, hcp)
-      val ga = new StandardGeneticAlgorithm(200, 20, 10, gap)
+
       List(
-        ("rhc", rhc), ("ga", ga), ("sa", simulatedAnnealing)
+        ("rhc", rhc), ("sa", simulatedAnnealing)
       ).map(
         pair => {
           val tuple = (pair._1, runAndReport(pair._2, iter, 2))
@@ -31,7 +31,15 @@ case class Experiment(evalFunction: EvaluationFunction,
         }
       )
     }
-    ) ::: mimicIterations.map(iter => {
+    ) :::
+      geneticIterations.map(iter => {
+        //All optimization Algorithms
+        val ga = new StandardGeneticAlgorithm(200, 20, 10, gap)
+        val tuple = ("ga", runAndReport(ga, iter, 2))
+        println(tuple)
+        tuple
+      }
+      ) ::: mimicIterations.map(iter => {
       //All optimization Algorithms
       val mimic = new MIMIC(200, 20, pop)
       val tuple = ("mimic", runAndReport(mimic, iter, 2))

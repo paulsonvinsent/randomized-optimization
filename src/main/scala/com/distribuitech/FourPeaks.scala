@@ -27,12 +27,11 @@ object FourPeaks extends App {
   implicit val hcp: GenericHillClimbingProblem = new GenericHillClimbingProblem(ef, odd, nf)
   implicit val gap: GenericGeneticAlgorithmProblem = new GenericGeneticAlgorithmProblem(ef, odd, mf, cf)
   implicit val pop: GenericProbabilisticOptimizationProblem = new GenericProbabilisticOptimizationProblem(ef, odd, df)
-  val iterations1: List[Int] = List(10, 50, 500, 1000, 2000, 6000, 12000, 16000, 25000, 40000)
-  val mimicIterations1: List[Int] = List(100, 200, 500, 800, 1000, 2000, 5000)
-  val iterations2: List[Int] = List(10, 50, 500, 1000, 2000, 3000, 4000, 6000, 8000, 12000,
-    16000, 25000, 30000, 40000, 60000, 100000, 200000)
-  val mimicIterations2: List[Int] = List(100, 200, 500, 800, 1000, 2000, 5000)
-  plotScores(ef, name, iterations1, mimicIterations1)
-  plotTimes(ef, name, iterations2, mimicIterations2)
+  val iterations: List[Int] = List(100, 200, 500, 800, 1000, 2000, 5000)
+  val iterationMimic = List(100, 200, 400, 600, 900, 1000, 2000)
+  val iterationsSa = iterationMimic.map(_ * 30000)
+  val iterationsGa = iterationsSa.map(x => x / 300)
+  plotScores(ef, name, iterations, iterations, iterations)
+  plotTimes(ef, name, iterationsSa, iterationsGa, iterationMimic)
 
 }
