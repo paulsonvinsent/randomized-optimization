@@ -3,18 +3,17 @@ package com.distribuitech
 import java.util
 
 import com.distribuitech.Engine.{plotScores, plotTimes}
-import com.distribuitech.MaxKColouring.generator.{getGenericGeneticAlgorithmProblem, getGenericHillClimbingProblem, getGenericProbabilisticOptimizationProblem}
 import dist.{AbstractDistribution, DiscreteDependencyTree, DiscreteUniformDistribution}
-import opt.{RandomizedHillClimbing, SimulatedAnnealing}
 import opt.example.TravelingSalesmanRouteEvaluationFunction
 import opt.ga.StandardGeneticAlgorithm
 import opt.prob.{GenericProbabilisticOptimizationProblem, MIMIC}
+import opt.{RandomizedHillClimbing, SimulatedAnnealing}
 
 import scala.util.Random
 
 object TravellingSalesman extends App {
 
-  val N = 50
+  val N = 100
   val points = Array.ofDim[Double](N, 2)
   points.foreach(
     x => {
@@ -33,12 +32,12 @@ object TravellingSalesman extends App {
   import opt.{GenericHillClimbingProblem, SwapNeighbor}
 
   val ranges = new Array[Int](N)
-  util.Arrays.fill(ranges, 2)
+  util.Arrays.fill(ranges, N)
 
-  val iterations: List[Int] = List(10, 50, 500, 1000, 2000, 4000, 6000)
-  val iterationMimic = List(100, 200, 400, 600, 800, 1000)
-  val iterationsSa = iterationMimic.map(_ * 30000)
-  val iterationsGa = iterationsSa.map(x => x / 300)
+  val iterations: List[Int] = (1 to 8).map(_ * 40) toList
+  val iterationMimic = (1 to 10).map(_ * 40) toList
+  val iterationsSa = iterationMimic.map(_ * 2000)
+  val iterationsGa = iterationsSa.map(x => x / 100)
 
 
   object helper extends OptimizationGenerator {

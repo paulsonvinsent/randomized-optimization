@@ -11,9 +11,9 @@ import scala.util.Random
 
 object MaxKColouring extends App {
 
-  val N = 800
-  val L = 18
-  val K = 7
+  val N = 200
+  val L = 8
+  val K = 10
   val random = new Random(N * L)
 
   val name = "Max K Colouring"
@@ -22,8 +22,8 @@ object MaxKColouring extends App {
 
   val ef = new MaxKColorFitnessFunction(vertices)
 
-  val iterations: List[Int] = (1 to 50).map(_ * 2).toList
-  val iterationMimic = (1 to 50) map (_ * 2) toList
+  val iterations: List[Int] = (1 to 39).toList ::: (1 to 5).map(_ * 40).toList
+  val iterationMimic = (1 to 9).toList ::: ((1 to 10) map (_ * 10) toList)
   val iterationsSa = iterationMimic.map(_ * 50)
 
   object generator extends OptimizationGenerator {

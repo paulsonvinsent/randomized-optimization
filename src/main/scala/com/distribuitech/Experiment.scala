@@ -14,14 +14,12 @@ case class Experiment(evalFunction: EvaluationFunction,
 
     val allResults: List[(String, AtomicResult)] = hillClimbingIterations.flatMap(iter => {
       //All optimization Algorithms
-      val rhc = generator.getRHC()
-      val simulatedAnnealing = generator.getSA()
 
       List(
-        ("rhc", rhc), ("sa", simulatedAnnealing)
+        "rhc", "sa"
       ).map(
-        pair => {
-          val tuple = (pair._1, runAndReport(pair._2, iter, runs))
+        id => {
+          val tuple = (id, runAndReport(id, iter, runs))
           println(tuple)
           tuple
         }
@@ -30,15 +28,13 @@ case class Experiment(evalFunction: EvaluationFunction,
     ) :::
       geneticIterations.map(iter => {
         //All optimization Algorithms
-        val ga = generator.getGA()
-        val tuple = ("ga", runAndReport(ga, iter, runs))
+        val tuple = ("ga", runAndReport("ga", iter, runs))
         println(tuple)
         tuple
       }
       ) ::: mimicIterations.map(iter => {
       //All optimization Algorithms
-      val mimic = generator.getMIMIC()
-      val tuple = ("mimic", runAndReport(mimic, iter, runs))
+      val tuple = ("mimic", runAndReport("mimic", iter, runs))
       println(tuple)
       tuple
     }
@@ -47,11 +43,19 @@ case class Experiment(evalFunction: EvaluationFunction,
     ExperimentResults(groupedResults("rhc"), groupedResults("ga"), groupedResults("mimic"), groupedResults("sa"))
   }
 
+  def getAlgorithm(id: String): OptimizationAlgorithm = id match {
+    case "rhc" => generator.getRHC()
+    case "sa" => generator.getSA()
+    case "ga" => generator.getGA()
+    case "mimic" => generator.getMIMIC()
+  }
 
-  def runAndReport(algorithm: OptimizationAlgorithm, iterations: Int, runs: Int): AtomicResult = {
+
+  def runAndReport(id: String, iterations: Int, runs: Int): AtomicResult = {
     val intermediateResult = (1 to runs).map(
       _ => {
         val startTime: Long = System.currentTimeMillis()
+        val algorithm = getAlgorithm(id)
         val fit = new FixedIterationTrainer(algorithm, iterations)
         fit.train()
         val score = evalFunction.value(algorithm.getOptimal)

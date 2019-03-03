@@ -8,7 +8,7 @@ object Engine {
                  name: String, iterations: List[Int],
                  geneticIterations: List[Int],
                  mimicIterations: List[Int])
-                (helper: OptimizationGenerator) = {
+                (helper: OptimizationGenerator): ExperimentResults = {
 
     val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1,
       helper).runExperiment()
@@ -32,15 +32,21 @@ object Engine {
 
 
     draw(p, s"$name Scores", writer.FileOptions(overwrite = true))
+    results
   }
 
 
   def plotTimes(ef: EvaluationFunction, name: String, iterations: List[Int]
                 , geneticIterations: List[Int], mimicIterations: List[Int])
-               (helper: OptimizationGenerator) = {
+               (helper: OptimizationGenerator): ExperimentResults = {
 
     val results: ExperimentResults = Experiment(ef, iterations, geneticIterations, mimicIterations, 1, helper).runExperiment()
 
+    plotThisForTime(name, results)
+    results
+  }
+
+  def plotThisForTime(name: String, results: ExperimentResults) = {
     val commonAxisOptions = AxisOptions()
 
     val xAxisOptions = commonAxisOptions.title("Time in ms").noZeroLine
@@ -48,13 +54,13 @@ object Engine {
 
 
     val p = Plot()
-      .withScatter(results.rhc.map(_.averageTime.toInt), results.rhc.map(_.score),
+      .withScatter(results.rhc.sortBy(_.averageTime).map(_.averageTime.toInt), results.rhc.sortBy(_.averageTime).map(_.score),
         ScatterOptions().mode(ScatterMode.Line).name("RHC"))
-      .withScatter(results.ga.map(_.averageTime.toInt), results.ga.map(_.score),
+      .withScatter(results.ga.sortBy(_.averageTime).map(_.averageTime.toInt), results.ga.sortBy(_.averageTime).map(_.score),
         ScatterOptions().mode(ScatterMode.Line).name("GA"))
-      .withScatter(results.sa.map(_.averageTime.toInt), results.sa.map(_.score),
+      .withScatter(results.sa.sortBy(_.averageTime).map(_.averageTime.toInt), results.sa.sortBy(_.averageTime).map(_.score),
         ScatterOptions().mode(ScatterMode.Line).name("SA"))
-      .withScatter(results.mimic.map(_.averageTime.toInt), results.mimic.map(_.score),
+      .withScatter(results.mimic.sortBy(_.averageTime).map(_.averageTime.toInt), results.mimic.sortBy(_.averageTime).map(_.score),
         ScatterOptions().mode(ScatterMode.Line).name("MIMIC"))
       .xAxisOptions(xAxisOptions).yAxisOptions(yAxisOptions)
 
