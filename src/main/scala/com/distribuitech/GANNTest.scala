@@ -53,7 +53,7 @@ object GANNTest extends App {
 
   private def runAndPlot(population: Int, toMate: Int, toMuate: Int) = {
 
-    val iterations: List[Int] = (1 to 4).toList.map(_ * 200) ::: (1 to 6).toList.map(_ * 1000)
+    val iterations: List[Int] = (1 to 20).toList.map(_ * 50)
 
     val otput: List[(Int, Double, Double)] = iterations.map(
       iter => {
