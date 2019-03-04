@@ -9,7 +9,7 @@ object GANNTest extends App {
 
   val iterations: List[Int] = (1 to 19).toList.map(_ * 5) ::: (1 to 10).toList.map(_ * 100)
 
-  val populations: List[Int] = List(100, 200, 300, 400, 500)
+  val populations: List[Int] = List(100, 200, 300)
 
   val reslts1: List[(Int, Double)] = populations.map(population => {
     val best = runAndPlot(population, 100, 20,"Find Population")
@@ -23,7 +23,7 @@ object GANNTest extends App {
 
   val limit: Int = bestPopulation / 2
 
-  val toMateList: List[Int] = (25 to limit).by(50) toList
+  val toMateList: List[Int] = (50 to limit).by(50) toList
 
 
   val reslts2: List[(Int, Double)] = toMateList.map(mateCount => {
@@ -37,7 +37,7 @@ object GANNTest extends App {
 
   val bestToMate: Int = reslts2.maxBy(_._2)._1
 
-  val limitToMutate: Int = Math.min(bestToMate / 2, 50)
+  val limitToMutate: Int = Math.min(bestToMate / 4, 50)
 
   val toMutateList: List[Int] = (5 to limitToMutate).by(5).toList
 
