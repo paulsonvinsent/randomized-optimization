@@ -51,10 +51,10 @@ object GANNTest extends App {
   println(reslts3)
 
 
-  runAndPlot(bestPopulation, bestToMate, reslts3.maxBy(_._2)._1, "Final", iterations = (1 to 4).toList.map(_ * 200))
+  runAndPlot(bestPopulation, bestToMate, reslts3.maxBy(_._2)._1, "Final", iterations = 100 +: (1 to 4).toList.map(_ * 200))
 
 
-  private def runAndPlot(population: Int, toMate: Int, toMuate: Int, tag: String = "", iterations: List[Int] = (1 to 20).toList.map(_ * 10)) = {
+  private def runAndPlot(population: Int, toMate: Int, toMuate: Int, tag: String = "", iterations: List[Int] = (1 to 10).toList.map(_ * 20)) = {
 
 
     val otput: List[(Int, Double, Double)] = iterations.map(
