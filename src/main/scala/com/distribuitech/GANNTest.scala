@@ -12,7 +12,7 @@ object GANNTest extends App {
   val populations: List[Int] = List(100, 200, 300, 400, 500)
 
   val reslts1: List[(Int, Double)] = populations.map(population => {
-    val best = runAndPlot(population, 100, 20)
+    val best = runAndPlot(population, 100, 20,"Find Population")
     (population, best)
   })
 
@@ -23,11 +23,11 @@ object GANNTest extends App {
 
   val limit: Int = bestPopulation / 2
 
-  val toMateList: List[Int] = (25 to limit).by(50).filter(_ != 100).toList
+  val toMateList: List[Int] = (25 to limit).by(50) toList
 
 
   val reslts2: List[(Int, Double)] = toMateList.map(mateCount => {
-    val best = runAndPlot(bestPopulation, mateCount, 20)
+    val best = runAndPlot(bestPopulation, mateCount, 20,"Find Mate param")
     (mateCount, best)
   })
 
@@ -39,10 +39,10 @@ object GANNTest extends App {
 
   val limitToMutate: Int = Math.min(bestToMate / 2, 50)
 
-  val toMutateList: List[Int] = (5 to limitToMutate).by(5).toList.filter(_ !=20)
+  val toMutateList: List[Int] = (5 to limitToMutate).by(5).toList
 
   val reslts3: List[(Int, Double)] = toMutateList.map(mutateCount => {
-    val best = runAndPlot(bestPopulation, bestToMate, mutateCount)
+    val best = runAndPlot(bestPopulation, bestToMate, mutateCount,"Find Mutate param")
     (mutateCount, best)
   })
 
@@ -51,10 +51,10 @@ object GANNTest extends App {
   println(reslts3)
 
 
-  runAndPlot(bestPopulation, bestToMate, reslts3.maxBy(_._2)._1, iterations = (1 to 4).toList.map(_ * 200), "final")
+  runAndPlot(bestPopulation, bestToMate, reslts3.maxBy(_._2)._1,"Final", iterations = (1 to 4).toList.map(_ * 200))
 
 
-  private def runAndPlot(population: Int, toMate: Int, toMuate: Int, iterations: List[Int] = (1 to 10).toList.map(_ * 10), tag: String = "") = {
+  private def runAndPlot(population: Int, toMate: Int, toMuate: Int,tag: String = "", iterations: List[Int] = (1 to 10).toList.map(_ * 10)) = {
 
 
     val otput: List[(Int, Double, Double)] = iterations.map(
