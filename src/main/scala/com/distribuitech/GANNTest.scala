@@ -23,7 +23,7 @@ object GANNTest extends App {
 
   val limit: Int = bestPopulation / 2
 
-  val toMateList: List[Int] = (25 to limit).by(50).toList
+  val toMateList: List[Int] = (25 to limit).by(50).filter(_ != 100).toList
 
 
   val reslts2: List[(Int, Double)] = toMateList.map(mateCount => {
@@ -39,7 +39,7 @@ object GANNTest extends App {
 
   val limitToMutate: Int = Math.min(bestToMate / 2, 50)
 
-  val toMutateList: List[Int] = (5 to limitToMutate).by(5).toList
+  val toMutateList: List[Int] = (5 to limitToMutate).by(5).toList.filter(_ !=20)
 
   val reslts3: List[(Int, Double)] = toMutateList.map(mutateCount => {
     val best = runAndPlot(bestPopulation, bestToMate, mutateCount)
@@ -51,21 +51,24 @@ object GANNTest extends App {
   println(reslts3)
 
 
-  private def runAndPlot(population: Int, toMate: Int, toMuate: Int) = {
+  runAndPlot(bestPopulation, bestToMate, reslts3.maxBy(_._2)._1, iterations = (1 to 4).toList.map(_ * 200), "final")
 
-    val iterations: List[Int] = (1 to 20).toList.map(_ * 50)
+
+  private def runAndPlot(population: Int, toMate: Int, toMuate: Int, iterations: List[Int] = (1 to 10).toList.map(_ * 10), tag: String = "") = {
+
 
     val otput: List[(Int, Double, Double)] = iterations.map(
       iter => {
         val tuple = NNRandomizedOptimization.getOptimizationProblem()
         val ga: OptimizationAlgorithm = new StandardGeneticAlgorithm(population, toMate, toMuate, tuple._2)
         val results = NNRandomizedOptimization.trainAndReportTestAndValidationAccracy(ga, iter, tuple._1)
+        println(s"$iter,$results")
         (iter, results._1, results._2)
       }
 
     )
 
-    println(s"SA best for ($population,$toMate,$toMuate) : " + otput.maxBy(_._3))
+    println(s"$tag SA best for ($population,$toMate,$toMuate) : " + otput.maxBy(_._3))
 
     val commonAxisOptions = AxisOptions()
 
@@ -81,7 +84,7 @@ object GANNTest extends App {
       .xAxisOptions(xAxisOptions).yAxisOptions(yAxisOptions)
 
 
-    draw(p, s"GA NN Optimization Cooling Poplation:$population toMate:$toMate toMate:$toMuate)", writer.FileOptions(overwrite = true))
+    draw(p, s"$tag GA NN Optimization Cooling Poplation:$population toMate:$toMate toMate:$toMuate)", writer.FileOptions(overwrite = true))
     otput.map(_._3).max
   }
 
