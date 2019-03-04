@@ -7,8 +7,6 @@ import opt.ga.StandardGeneticAlgorithm
 object GANNTest extends App {
 
 
-  val iterations: List[Int] = (1 to 19).toList.map(_ * 5) ::: (1 to 10).toList.map(_ * 100)
-
   val populations: List[Int] = List(100, 200, 300)
 
   val reslts1: List[(Int, Double)] = populations.map(population => {
