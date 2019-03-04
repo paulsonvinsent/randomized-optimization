@@ -26,8 +26,10 @@ object RHCNNTest extends App {
 
 
   val p = Plot()
+    .withScatter(otput.map(_._1), otput.map(_._2),
+      ScatterOptions().mode(ScatterMode.Line).name("Test Accuracy"))
     .withScatter(otput.map(_._1), otput.map(_._3),
-      ScatterOptions().mode(ScatterMode.Line).name("Accuracy"))
+      ScatterOptions().mode(ScatterMode.Line).name("Validation Accuracy"))
     .xAxisOptions(xAxisOptions).yAxisOptions(yAxisOptions)
 
 
