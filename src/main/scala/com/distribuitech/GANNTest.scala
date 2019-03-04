@@ -68,7 +68,7 @@ object GANNTest extends App {
 
     )
 
-    println(s"$tag SA best for ($population,$toMate,$toMuate) : " + otput.maxBy(_._3))
+    println(s"$tag GA best for ($population,$toMate,$toMuate) : " + otput.maxBy(_._3))
 
     val commonAxisOptions = AxisOptions()
 
